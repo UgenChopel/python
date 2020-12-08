@@ -1,36 +1,40 @@
+import time
 import csv
 from time import time, sleep
 
-while True:  # for continuously fetching the data
+while (1):  # for continuously fetching the data
 
-    def readLines():
-        with open('/media/ugyen/Drive/ACS/libiec61850/01Practice_with_1Device/client_app1/value.csv', 'r') as data:
-            reader = csv.reader(data)
-            row = list(reader)
-            for x in row:
-                for y in x:
-                    print("the value of 'y' is", y)
+    ## reading the values
+    with open( '/media/ugyen/Drive/ACS/libiec61850/01Practice_with_1Device/client_app1/value1.csv', 'r' ) as values:
+        data = csv.reader( values, delimiter=" " )
+        for row in data:
+            print( row[0], row[1], row[2], row[3], row[4])  # To print the values read
 
-                    if float(y) <= 0.95:
-                        print("Put ON ESS")
-                        sleep(5)
+    ## writing the values
+    with open( 'file1.csv', 'a' ) as file:
+        csv.writer( file, delimiter=',', quoting=csv.QUOTE_MINIMAL )
+        file.write( row[0]+ row[1] + row[2] + row[3] + row[4] + "\n" )  # reading the floating value of 'y' and giving new line
 
-                        if float(y) <= 0.95:
-                            print("suspend EV1")
-                            print('wait...')
-                            sleep(2)
-                            break
+    ## checking the limit violations of voltage and taking necessary decisions
+    if float( row[0] ) <= 0.95:
 
-                    if float(y) >= 1.05:
-                        print('Suspend ESS\n')
+        if float( row[1] ) == 0:
+            print( "Put ON ESS" )
+            sleep( 1 )
 
-                    else:
-                        print('wonderful! continue\n')
+        elif float( row[2] ) != 0:
+            print( 'Suspend EV1' )
+            sleep( 1 )
 
-            with open('file1.csv', 'a') as file:
-                csv.writer(file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-                file.write(y + "\n")  # reading the floating value of 'y' and giving new line
+        elif float( row[3] ) != 0:
+            print( 'Suspend EV2' )
+            sleep( 1 )
 
+        elif float( row[4] ) != 0:
+            print( 'Suspend EV3' )
+            sleep( 1 )
 
-    sleep(2)  # in seconds
-    readLines()
+    else:
+        print( "wonderful" )
+
+    sleep( 1 )
